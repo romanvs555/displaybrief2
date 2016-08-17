@@ -1,0 +1,75 @@
+import sys
+
+sys.path.append('../../')
+
+import feedparser
+import dot3k.joystick as joystick
+import dot3k.lcd as lcd
+import dot3k.backlight as backlight
+from dot3k.menu import Menu, MenuOption
+#from plugins.utils import Backlight, Contrast
+#from plugins.graph import IPAddress, GraphTemp, GraphCPU, GraphNetSpeed
+#from plugins.clock import Clock
+#from plugins.volume import Volume
+import time
+
+lcd.clear()
+#lcd.write("")
+
+# Turn off the backlight
+backlight.rgb(3, 3, 3)
+
+try:
+    rss = feedparser.parse('http://feeds.reuters.com/reuters/entertainment')
+    print "Todays News:"
+    print rss.entries[1]["title"]
+    print rss.entries[2]["title"]
+    print rss.entries[3]["title"]
+#    lcd.write(rss.entries[1]["title"])
+ #   lcd.write(rss.entries[2]["title"])
+  #  lcd.write(rss.entries[3]["title"])
+    newsfeed = Menu({
+                                rss.entries[1]['title']:(),
+                                rss.entries[2]['title']:(),
+                                rss.entries[3]['title']:(),
+                 },
+                lcd,
+                None,
+                30)
+    print newsfeed
+    lcd.write(newsfeed)
+
+except rss.bozo:
+   news = 'Failed to reach BBC News'
+
+REPEAT_DELAY= 1.0
+
+@joystick.on(joystick.UP)
+def handle_up(pin):
+    newsfeed.up()
+    joystick.repeat(joystick.UP, menu.up, REPEAT_DELAY, 0.9)
+
+
+@joystick.on(joystick.DOWN)
+def handle_down(pin):
+    newsfeed.down()
+    joystick.repeat(joystick.DOWN, menu.down, REPEAT_DELAY, 0.9)
+
+
+@joystick.on(joystick.LEFT)
+def handle_left(pin):
+    newsfeed.left()
+    joystick.repeat(joystick.LEFT, menu.left, REPEAT_DELAY, 0.9)
+
+
+@joystick.on(joystick.RIGHT)
+def handle_right(pin):
+    newsfeed.right()
+    joystick.repeat(joystick.RIGHT, menu.right, REPEAT_DELAY, 0.9)
+
+
+@joystick.on(joystick.BUTTON)
+def handle_button(pin):
+    newsfeed.select()
+
+#lcd.write(newsfeed)
